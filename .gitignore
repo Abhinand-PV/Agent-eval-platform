@@ -1,5 +1,4 @@
-.env
+﻿.env
 venv/
-docker-compose.yml
 __pycache__/
 *.pyc
