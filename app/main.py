@@ -10,11 +10,6 @@ from app.database import get_session, init_db
 from app.models import EvalTask, EvalResult
 from app.evaluator import run_evaluation
 
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
-
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
@@ -24,8 +19,11 @@ async def lifespan(app: FastAPI):
         print(f"Database initialization failed: {e}")
     yield
 
-
 app = FastAPI(title="Agent Eval Platform", lifespan=lifespan)
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 class TaskCreate(BaseModel):
     question: str
     expected_answer: str
