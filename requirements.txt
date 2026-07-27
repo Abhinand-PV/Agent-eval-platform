@@ -10,3 +10,11 @@ opentelemetry-instrumentation-langchain==0.62.1
 opentelemetry-exporter-otlp==1.42.1
 python-dotenv==1.1.0
 pydantic==2.11.4
+fastapi
+uvicorn
+sqlalchemy
+asyncpg
+greenlet
+pydantic
+opentelemetry-api
+opentelemetry-sdk
