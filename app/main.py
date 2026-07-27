@@ -10,10 +10,18 @@ from app.database import get_session, init_db
 from app.models import EvalTask, EvalResult
 from app.evaluator import run_evaluation
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
+    try:
+        await init_db()
+        print("Database initialized successfully")
+    except Exception as e:
+        print(f"Database initialization failed: {e}")
     yield
 
 
