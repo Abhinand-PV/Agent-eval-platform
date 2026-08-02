@@ -11,11 +11,11 @@
 
 A production-ready, multi-tenant AI agent evaluation platform that automatically tests, benchmarks, and scores any AI agent (internal or external HTTP endpoints) against custom datasets — measuring correctness, hallucination rate, tool usage compliance, latency, and token cost.
 
-**🚀 Live API & Interactive Docs:** [https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)
+**Live API & Interactive Docs:** [https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)
 
 ---
 
-## 💡 Overview
+## Overview
 
 Evaluating LLM agents is challenging because exact string matching fails on open-ended outputs. **Agent Eval Platform** provides an end-to-end automated pipeline for continuous AI evaluation:
 
@@ -26,18 +26,18 @@ Evaluating LLM agents is challenging because exact string matching fails on open
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-- 🔌 **Plug-and-Play External Agent Support:** Register any external HTTP agent standardizing on JSON payload exchange. No sdk integration required.
-- 👩‍⚖️ **LLM-as-Judge Evaluation:** Automatic scoring of correctness (0.0 to 1.0) and hallucination rate (0.0 to 1.0) complete with clear natural language rationales.
-- 🛠️ **Tool Usage Verification:** Validates whether required tools (e.g., `lookup_data`, `calculate`) were invoked during execution and identifies missing tool calls.
-- 📊 **Comprehensive Metric Reports:** Real-time feedback covering correctness score, hallucination breakdown, missing tools, response latency (ms), and cost estimations (USD).
-- 📈 **OpenTelemetry Observability:** Distributed trace generation and custom span collection to track internal execution graphs and token counts.
-- ⚡ **High-Performance Async Pipeline:** Fully asynchronous core leveraging **FastAPI**, **SQLAlchemy 2.0 (asyncio)**, and **asyncpg**.
+- **Plug-and-Play External Agent Support:** Register any external HTTP agent standardizing on JSON payload exchange. No SDK integration required.
+- **LLM-as-Judge Evaluation:** Automatic scoring of correctness (0.0 to 1.0) and hallucination rate (0.0 to 1.0) complete with clear natural language rationales.
+- **Tool Usage Verification:** Validates whether required tools (e.g., `lookup_data`, `calculate`) were invoked during execution and identifies missing tool calls.
+- **Comprehensive Metric Reports:** Real-time feedback covering correctness score, hallucination breakdown, missing tools, response latency (ms), and cost estimations (USD).
+- **OpenTelemetry Observability:** Distributed trace generation and custom span collection to track internal execution graphs and token counts.
+- **High-Performance Async Pipeline:** Fully asynchronous core leveraging **FastAPI**, **SQLAlchemy 2.0 (asyncio)**, and **asyncpg**.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Description |
 |---|---|---|
@@ -51,7 +51,7 @@ Evaluating LLM agents is challenging because exact string matching fails on open
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```
                                  +-----------------------------------+
@@ -103,11 +103,11 @@ Evaluating LLM agents is challenging because exact string matching fails on open
 
 ---
 
-## 🌐 Quickstart: Using the Live Platform
+## Quickstart: Using the Live Platform
 
 No local installation is required to test the platform. Access the live Swagger documentation to interact with the API endpoints:
 
-👉 **[https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)**
+**[https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)**
 
 ---
 
@@ -248,7 +248,7 @@ Content-Type: application/json
 
 ---
 
-## 📊 Evaluation Metrics Explained
+## Evaluation Metrics Explained
 
 | Metric | Range / Type | Explanation |
 |---|---|---|
@@ -263,7 +263,7 @@ Content-Type: application/json
 
 ---
 
-## 💻 Local Development Setup
+## Local Development Setup
 
 ### Prerequisites
 
@@ -306,7 +306,7 @@ Access local API documentation at: `http://localhost:8000/docs`
 
 ---
 
-## 🧪 Terminal Demo & Test Scripts
+## Terminal Demo & Test Scripts
 
 Run the included automated test suite locally:
 
@@ -323,7 +323,7 @@ python demo_platform.py https://agent-eval-platform.vercel.app
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 agent-eval-platform/
@@ -349,7 +349,7 @@ agent-eval-platform/
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 The live production instance is deployed on **Vercel** with a serverless PostgreSQL database hosted on **Render**.
 
@@ -364,7 +364,7 @@ The live production instance is deployed on **Vercel** with a serverless Postgre
 
 ---
 
-## 📄 License
+## License
 
 This project is open-source under the [MIT License](LICENSE).
 
