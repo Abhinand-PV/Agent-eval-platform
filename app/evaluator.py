@@ -1,3 +1,4 @@
+import time
 import httpx
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,16 +20,20 @@ def extract_tool_outputs(messages) -> list[str]:
 async def call_external_agent(endpoint_url: str, question: str) -> dict:
     """Call a user-registered external agent endpoint and return a normalized result dict."""
     payload = {"question": question}
+    start_time = time.perf_counter()
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(endpoint_url, json=payload)
         response.raise_for_status()
         data = response.json()
+    end_time = time.perf_counter()
+    latency_ms = int((end_time - start_time) * 1000)
+
     # Accept either 'answer' or 'output' as the response key
     output = data.get("answer") or data.get("output") or str(data)
     return {
         "output": output,
         "messages": [],  # External agents don't expose internal messages
-        "latency_ms": 0,
+        "latency_ms": latency_ms,
     }
 
 async def run_evaluation(session: AsyncSession, endpoint_url: str | None = None) -> list[dict]:

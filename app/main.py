@@ -76,6 +76,22 @@ async def create_task(task: TaskCreate, session: AsyncSession = Depends(get_sess
     )
 
 
+@app.get("/tasks", response_model=list[TaskResponse], summary="List all evaluation benchmark tasks")
+async def list_tasks(session: AsyncSession = Depends(get_session)):
+    """List all benchmark tasks defined on this platform."""
+    result = await session.execute(select(EvalTask))
+    tasks = result.scalars().all()
+    return [
+        TaskResponse(
+            id=t.id,
+            question=t.question,
+            expected_answer=t.expected_answer,
+            required_tools=t.required_tools or [],
+        )
+        for t in tasks
+    ]
+
+
 @app.post("/agents", response_model=AgentResponse, summary="Register an external agent")
 async def register_agent(agent: AgentCreate, session: AsyncSession = Depends(get_session)):
     """Register your own agent endpoint. The platform will POST {\"question\": \"...\"} to your URL
