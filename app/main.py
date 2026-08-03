@@ -134,3 +134,55 @@ async def trigger_evaluation(
 
     results = await run_evaluation(session, endpoint_url=endpoint_url)
     return {"status": "completed", "results": results}
+
+
+@app.get("/evaluations", summary="List historical evaluation results")
+async def list_evaluations(session: AsyncSession = Depends(get_session)):
+    """Retrieve all historical evaluation run records."""
+    result = await session.execute(select(EvalResult).order_by(EvalResult.id.desc()))
+    evals = result.scalars().all()
+    return [
+        {
+            "id": e.id,
+            "task_id": e.task_id,
+            "agent_output": e.agent_output,
+            "scores": e.scores or {},
+            "latency_ms": e.latency_ms or 0,
+            "token_count": e.token_count or 0,
+            "created_at": e.created_at.isoformat() if e.created_at else None,
+        }
+        for e in evals
+    ]
+
+
+@app.get("/evaluations/summary", summary="Get aggregate benchmark evaluation metrics")
+async def get_evaluations_summary(session: AsyncSession = Depends(get_session)):
+    """Compute platform-wide aggregate performance metrics across all evaluations."""
+    result = await session.execute(select(EvalResult))
+    evals = result.scalars().all()
+    total = len(evals)
+    if total == 0:
+        return {
+            "total_evaluations": 0,
+            "avg_correctness": 0.0,
+            "avg_hallucination_rate": 0.0,
+            "avg_latency_ms": 0.0,
+            "total_tokens": 0,
+        }
+
+    correctness_scores = [
+        e.scores.get("correctness", 0.0) for e in evals if e.scores and "correctness" in e.scores
+    ]
+    hallucination_rates = [
+        e.scores.get("hallucination_rate", 0.0) for e in evals if e.scores and "hallucination_rate" in e.scores
+    ]
+    latencies = [e.latency_ms or 0 for e in evals]
+    tokens = [e.token_count or 0 for e in evals]
+
+    return {
+        "total_evaluations": total,
+        "avg_correctness": round(sum(correctness_scores) / len(correctness_scores), 4) if correctness_scores else 0.0,
+        "avg_hallucination_rate": round(sum(hallucination_rates) / len(hallucination_rates), 4) if hallucination_rates else 0.0,
+        "avg_latency_ms": round(sum(latencies) / total, 2),
+        "total_tokens": sum(tokens),
+    }
