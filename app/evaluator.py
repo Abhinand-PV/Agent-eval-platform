@@ -17,24 +17,35 @@ def extract_tool_outputs(messages) -> list[str]:
     return outputs
 
 
-async def call_external_agent(endpoint_url: str, question: str) -> dict:
+async def call_external_agent(endpoint_url: str, question: str, timeout: float = 30.0) -> dict:
     """Call a user-registered external agent endpoint and return a normalized result dict."""
     payload = {"question": question}
     start_time = time.perf_counter()
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(endpoint_url, json=payload)
-        response.raise_for_status()
-        data = response.json()
-    end_time = time.perf_counter()
-    latency_ms = int((end_time - start_time) * 1000)
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(endpoint_url, json=payload)
+            response.raise_for_status()
+            data = response.json()
+        end_time = time.perf_counter()
+        latency_ms = int((end_time - start_time) * 1000)
 
-    # Accept either 'answer' or 'output' as the response key
-    output = data.get("answer") or data.get("output") or str(data)
-    return {
-        "output": output,
-        "messages": [],  # External agents don't expose internal messages
-        "latency_ms": latency_ms,
-    }
+        # Accept either 'answer' or 'output' as the response key
+        output = data.get("answer") or data.get("output") or str(data)
+        return {
+            "output": output,
+            "messages": [],  # External agents don't expose internal messages
+            "latency_ms": latency_ms,
+            "error": False,
+        }
+    except Exception as e:
+        end_time = time.perf_counter()
+        latency_ms = int((end_time - start_time) * 1000)
+        return {
+            "output": f"External agent error: {str(e)}",
+            "messages": [],
+            "latency_ms": latency_ms,
+            "error": True,
+        }
 
 async def run_evaluation(session: AsyncSession, endpoint_url: str | None = None) -> list[dict]:
     result_set = await session.execute(select(EvalTask))
