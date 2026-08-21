@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -77,9 +77,13 @@ async def create_task(task: TaskCreate, session: AsyncSession = Depends(get_sess
 
 
 @app.get("/tasks", response_model=list[TaskResponse], summary="List all evaluation benchmark tasks")
-async def list_tasks(session: AsyncSession = Depends(get_session)):
-    """List all benchmark tasks defined on this platform."""
-    result = await session.execute(select(EvalTask))
+async def list_tasks(
+    limit: int = Query(default=100, ge=1, le=1000),
+    offset: int = Query(default=0, ge=0),
+    session: AsyncSession = Depends(get_session),
+):
+    """List all benchmark tasks defined on this platform with pagination."""
+    result = await session.execute(select(EvalTask).offset(offset).limit(limit))
     tasks = result.scalars().all()
     return [
         TaskResponse(
@@ -90,6 +94,33 @@ async def list_tasks(session: AsyncSession = Depends(get_session)):
         )
         for t in tasks
     ]
+
+
+@app.get("/tasks/{task_id}", response_model=TaskResponse, summary="Get evaluation task by ID")
+async def get_task(task_id: int, session: AsyncSession = Depends(get_session)):
+    """Retrieve a single evaluation task by ID."""
+    result = await session.execute(select(EvalTask).where(EvalTask.id == task_id))
+    task = result.scalar_one_or_none()
+    if task is None:
+        raise HTTPException(status_code=404, detail=f"Task with id {task_id} not found.")
+    return TaskResponse(
+        id=task.id,
+        question=task.question,
+        expected_answer=task.expected_answer,
+        required_tools=task.required_tools or [],
+    )
+
+
+@app.delete("/tasks/{task_id}", summary="Delete evaluation task by ID")
+async def delete_task(task_id: int, session: AsyncSession = Depends(get_session)):
+    """Delete an evaluation task by ID."""
+    result = await session.execute(select(EvalTask).where(EvalTask.id == task_id))
+    task = result.scalar_one_or_none()
+    if task is None:
+        raise HTTPException(status_code=404, detail=f"Task with id {task_id} not found.")
+    await session.delete(task)
+    await session.commit()
+    return {"status": "success", "message": f"Task {task_id} deleted successfully."}
 
 
 @app.post("/agents", response_model=AgentResponse, summary="Register an external agent")
@@ -113,9 +144,13 @@ async def register_agent(agent: AgentCreate, session: AsyncSession = Depends(get
 
 
 @app.get("/agents", response_model=list[AgentResponse], summary="List all registered agents")
-async def list_agents(session: AsyncSession = Depends(get_session)):
-    """List all agents that have been registered on this platform."""
-    result = await session.execute(select(AgentEndpoint))
+async def list_agents(
+    limit: int = Query(default=100, ge=1, le=1000),
+    offset: int = Query(default=0, ge=0),
+    session: AsyncSession = Depends(get_session),
+):
+    """List all agents that have been registered on this platform with pagination."""
+    result = await session.execute(select(AgentEndpoint).offset(offset).limit(limit))
     agents = result.scalars().all()
     return [
         AgentResponse(
@@ -144,7 +179,6 @@ async def trigger_evaluation(
         )
         db_agent = result.scalar_one_or_none()
         if db_agent is None:
-            from fastapi import HTTPException
             raise HTTPException(status_code=404, detail=f"Agent with id {body.agent_id} not found.")
         endpoint_url = db_agent.endpoint_url
 
@@ -153,9 +187,15 @@ async def trigger_evaluation(
 
 
 @app.get("/evaluations", summary="List historical evaluation results")
-async def list_evaluations(session: AsyncSession = Depends(get_session)):
-    """Retrieve all historical evaluation run records."""
-    result = await session.execute(select(EvalResult).order_by(EvalResult.id.desc()))
+async def list_evaluations(
+    limit: int = Query(default=100, ge=1, le=1000),
+    offset: int = Query(default=0, ge=0),
+    session: AsyncSession = Depends(get_session),
+):
+    """Retrieve all historical evaluation run records with pagination."""
+    result = await session.execute(
+        select(EvalResult).order_by(EvalResult.id.desc()).offset(offset).limit(limit)
+    )
     evals = result.scalars().all()
     return [
         {
