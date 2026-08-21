@@ -1,11 +1,33 @@
 import os
 import json
+import re
 
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
 
 load_dotenv()
+
+
+def _extract_json_payload(content: str) -> dict:
+    """Extract and parse JSON payload from raw LLM output text, handling markdown fences and extraneous text."""
+    clean_text = content.strip()
+    # Strip markdown code fence if present
+    if clean_text.startswith("```"):
+        clean_text = re.sub(r"^```(?:json)?\n?", "", clean_text, flags=re.IGNORECASE)
+        clean_text = re.sub(r"\n?```$", "", clean_text)
+    clean_text = clean_text.strip()
+
+    try:
+        return json.loads(clean_text)
+    except json.JSONDecodeError:
+        # Fallback: find first '{' and last '}'
+        match = re.search(r"(\{.*\})", clean_text, re.DOTALL)
+        if match:
+            return json.loads(match.group(1))
+        raise
+
+
 def score_correctness(question: str, expected_answer: str, agent_output: str) -> dict:
     judge_llm = ChatGroq(
         model="llama-3.1-8b-instant",
@@ -28,13 +50,15 @@ Respond with ONLY a JSON object (no markdown, no explanation):
     ])
 
     try:
-        result = json.loads(response.content)
+        result = _extract_json_payload(response.content)
         return {
             "correctness": float(result.get("score", 0.0)),
             "rationale": result.get("rationale", ""),
         }
-    except (json.JSONDecodeError, ValueError):
+    except Exception:
         return {"correctness": 0.0, "rationale": "Judge failed to produce valid JSON"}
+
+
 def score_tool_use(required_tools: list[str], tools_called: list[str]) -> dict:
     if not required_tools:
         return {"tool_use_success": True, "missing_tools": []}
@@ -44,6 +68,8 @@ def score_tool_use(required_tools: list[str], tools_called: list[str]) -> dict:
         "tool_use_success": len(missing) == 0,
         "missing_tools": missing,
     }
+
+
 def score_hallucination(agent_output: str, tool_outputs: list[str]) -> dict:
     judge_llm = ChatGroq(
         model="llama-3.1-8b-instant",
@@ -76,13 +102,13 @@ Rules:
     ])
 
     try:
-        result = json.loads(response.content)
+        result = _extract_json_payload(response.content)
         return {
             "hallucination_rate": float(result.get("hallucination_rate", 0.0)),
             "unsupported_claims": result.get("unsupported_claims", []),
             "total_claims": result.get("total_claims", 0),
         }
-    except (json.JSONDecodeError, ValueError):
+    except Exception:
         return {
             "hallucination_rate": 0.0,
             "unsupported_claims": [],
