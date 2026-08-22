@@ -1,123 +1,126 @@
 # Agent Eval Platform
 
 <p align="center">
-  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/LangGraph-121212?style=for-the-badge&logo=chainlink" alt="LangGraph" />
-  <img src="https://img.shields.io/badge/Groq-F05032?style=for-the-badge&logo=lightning" alt="Groq" />
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/LangGraph-121212?style=for-the-badge&logo=chainlink&logoColor=white" alt="LangGraph" />
+  <img src="https://img.shields.io/badge/Groq-F05032?style=for-the-badge&logo=lightning&logoColor=white" alt="Groq" />
   <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/OpenTelemetry-000000?style=for-the-badge&logo=opentelemetry&logoColor=white" alt="OpenTelemetry" />
   <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
-  <img src="https://img.shields.io/badge/OpenTelemetry-000000?style=for-the-badge&logo=opentelemetry" alt="OpenTelemetry" />
 </p>
 
-A production-ready, multi-tenant AI agent evaluation platform that automatically tests, benchmarks, and scores any AI agent (internal or external HTTP endpoints) against custom datasets — measuring correctness, hallucination rate, tool usage compliance, latency, and token cost.
+<p align="center">
+  <strong>An enterprise-grade, multi-tenant AI Agent Evaluation & Benchmarking Platform.</strong><br />
+  Automatically evaluate, audit, and benchmark internal and external HTTP LLM agents across correctness, hallucination, tool usage compliance, latency, and execution cost.
+</p>
 
-**Live API & Interactive Docs:** [https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)
-
----
-
-## Overview
-
-Evaluating LLM agents is challenging because exact string matching fails on open-ended outputs. **Agent Eval Platform** provides an end-to-end automated pipeline for continuous AI evaluation:
-
-1. **Benchmarking & Datasets:** Define ground-truth test datasets (`tasks`) containing target questions, expected ground-truth answers, and mandatory tools that should be invoked.
-2. **Flexible Agent Integration:** Register custom external HTTP agent endpoints or evaluate against the platform's internal **LangGraph** multi-tool agent powered by **Groq Llama 3.3 70B**.
-3. **LLM-as-Judge Scoring:** Uses secondary LLM judges (powered by **Groq Llama 3.1 8B**) to evaluate factual correctness and detect unsupported claims (hallucination rate) with natural language reasoning.
-4. **Tool Call & Metric Auditing:** Intercepts agent tool executions and OpenTelemetry telemetry spans to measure tool compliance, request latency, and estimated token execution costs.
+<p align="center">
+  <a href="https://agent-eval-platform.vercel.app/docs"><strong>🚀 View Interactive API Documentation (Swagger) »</strong></a>
+</p>
 
 ---
 
-## Key Features
+## 📌 Executive Summary
 
-- **Plug-and-Play External Agent Support:** Register any external HTTP agent standardizing on JSON payload exchange. No SDK integration required.
-- **LLM-as-Judge Evaluation:** Automatic scoring of correctness (0.0 to 1.0) and hallucination rate (0.0 to 1.0) complete with clear natural language rationales.
-- **Tool Usage Verification:** Validates whether required tools (e.g., `lookup_data`, `calculate`) were invoked during execution and identifies missing tool calls.
-- **Comprehensive Metric Reports:** Real-time feedback covering correctness score, hallucination breakdown, missing tools, response latency (ms), and cost estimations (USD).
-- **OpenTelemetry Observability:** Distributed trace generation and custom span collection to track internal execution graphs and token counts.
-- **High-Performance Async Pipeline:** Fully asynchronous core leveraging **FastAPI**, **SQLAlchemy 2.0 (asyncio)**, and **asyncpg**.
+Evaluating autonomous LLM agents with traditional exact-string matching or naive assertions is insufficient due to non-deterministic, open-ended outputs. 
+
+**Agent Eval Platform** provides a robust, continuous evaluation framework designed to score AI agents against customized ground-truth datasets. It intercepts agent executions, tracks OpenTelemetry spans, runs secondary LLM judges for factual alignment and hallucination verification, and reports granular metrics in real-time.
 
 ---
 
-## Tech Stack
+## ✨ Key Features
 
-| Layer | Technology | Description |
+- **🔌 Plug-and-Play Agent Integration:** Register external HTTP agent endpoints standardizing on simple JSON payloads. Zero SDK lock-in.
+- **⚖️ LLM-as-a-Judge Scoring Engine:** Automated factual correctness scoring ($0.0$ to $1.0$) paired with secondary judge reasoning rationales.
+- **🛡️ Hallucination & Fact-Checking Audit:** Detects unsupported or ungrounded assertions made by agents against reference context and execution state.
+- **🛠️ Tool Usage Verification:** Audits whether mandatory tools (e.g., `lookup_data`, `calculate`) were correctly invoked or omitted during workflow execution.
+- **📊 Real-time Metric Aggregation:** Tracks execution latency (ms), token volume, and estimated execution costs (USD) alongside qualitative scores.
+- **📡 OpenTelemetry Observability:** Built-in trace generation and custom span processor collection for end-to-end multi-step agent observability.
+- **⚡ High-Performance Async Architecture:** Built with Python 3.11+, **FastAPI**, **SQLAlchemy 2.0 (asyncio)**, and **asyncpg**.
+
+---
+
+## 🛠️ Tech Stack & Ecosystem
+
+| Component Layer | Technology | Purpose / Role |
 |---|---|---|
-| **API Framework** | FastAPI | High-performance, asynchronous web framework for Python 3.11+ |
-| **Agent Framework** | LangGraph + LangChain | Graph-based LLM workflow execution for internal agents |
-| **LLM Provider** | Groq Cloud | Llama 3.3 70B (Internal Agent) & Llama 3.1 8B (LLM Judge) |
-| **Database** | PostgreSQL | Persistent state storage hosted on Render |
-| **ORM** | SQLAlchemy (Async) | Modern async database operations with PostgreSQL |
-| **Deployment** | Vercel | Serverless hosting configuration via `vercel.json` |
-| **Observability** | OpenTelemetry | Custom span processor and tracer provider setup |
+| **API Framework** | [FastAPI](https://fastapi.tiangolo.com/) | Asynchronous, high-performance web framework for Python 3.11+ |
+| **Agent Runtime** | [LangGraph](https://python.langchain.com/docs/langgraph/) / [LangChain](https://python.langchain.com/) | Graph-based multi-step agent flow for built-in reference agents |
+| **LLM Inference Engine** | [Groq Cloud](https://groq.com/) | High-speed inference using `Llama-3.3-70b-versatile` & `Llama-3.1-8b-instant` |
+| **Database & Persistence** | PostgreSQL / [SQLAlchemy 2.0 Async](https://docs.sqlalchemy.org/) | Async relational storage for tasks, agent registries, and evaluation runs |
+| **Observability** | [OpenTelemetry](https://opentelemetry.io/) | Custom span processor exporting execution trace spans and token usage metrics |
+| **Deployment & Hosting** | [Vercel](https://vercel.com/) / Render DB | Serverless deployment via `vercel.json` with cloud PostgreSQL storage |
 
 ---
 
-## System Architecture
+## 🏗️ System Architecture
 
 ```
-                                 +-----------------------------------+
-                                 |       User / Client / CI          |
-                                 +-----------------+-----------------+
-                                                   |
-                                                   v
-                                     +-------------+-------------+
-                                     |  FastAPI App (Vercel)     |
-                                     +-------------+-------------+
-                                                   |
-          +----------------------------------------+----------------------------------------+
-          |                                        |                                        |
-          v                                        v                                        v
-  +---------------+                        +---------------+                        +---------------+
-  | POST /tasks   |                        | POST /agents  |                        | POST /evals   |
-  | Define test   |                        | Register URL  |                        | Trigger Eval  |
-  | benchmark     |                        | endpoint      |                        | pipeline      |
-  +---------------+                        +---------------+                        +-------+-------+
-                                                                                            |
-                                                                                            v
-                                                                                   +--------+-------+
-                                                                                   |  Evaluator     |
-                                                                                   +---+---------+--+
-                                                                                       |         |
-                                         +---------------------------------------------+         +---------------------------------------------+
-                                         |                                                                                                     |
-                                         v                                                                                                     v
-                     +-------------------+-------------------+                                                             +-------------------+-------------------+
-                     |  Internal Agent (LangGraph + Groq)    |                                                             |  External Agent Endpoint (HTTP)   |
-                     |  - Tool Call Execution                |                                                             |  - Custom API / Remote Host       |
-                     +-------------------+-------------------+                                                             +-------------------+-------------------+
-                                         |                                                                                                     |
-                                         +---------------------------------------------+---------+---------------------------------------------+
-                                                                                       |
-                                                                                       v
-                                                                           +-----------+-----------+
-                                                                           |  LLM-as-Judge Scorer  |
-                                                                           |  - Correctness Judge  |
-                                                                           |  - Hallucination Judge|
-                                                                           +-----------+-----------+
-                                                                                       |
-                                                                                       v
-                                                                           +-----------+-----------+
-                                                                           |  PostgreSQL Database  |
-                                                                           |  (Tasks, Evals, Spans)|
-                                                                           +-----------------------+
+                                  +-----------------------------------+
+                                  |       User / Client / CI          |
+                                  +-----------------+-----------------+
+                                                    |
+                                                    v
+                                      +-------------+-------------+
+                                      |  FastAPI App (Vercel)     |
+                                      +-------------+-------------+
+                                                    |
+          +-----------------------------------------+-----------------------------------------+
+          |                                         |                                         |
+          v                                         v                                         v
+  +---------------+                         +---------------+                         +---------------+
+  | POST /tasks   |                         | POST /agents  |                         | POST /evals   |
+  | Define test   |                         | Register URL  |                         | Trigger Eval  |
+  | benchmark     |                         | endpoint      |                         | pipeline      |
+  +---------------+                         +---------------+                         +-------+-------+
+                                                                                              |
+                                                                                              v
+                                                                                     +--------+-------+
+                                                                                     |  Evaluator     |
+                                                                                     +---+---------+--+
+                                                                                         |         |
+                                          +----------------------------------------------+         +----------------------------------------------+
+                                          |                                                                                                       |
+                                          v                                                                                                       v
+                      +-------------------+-------------------+                                                               +-------------------+-------------------+
+                      |  Internal Agent (LangGraph + Groq)    |                                                               |  External Agent Endpoint (HTTP)   |
+                      |  - Tool Call Execution                |                                                               |  - Custom API / Remote Host       |
+                      +-------------------+-------------------+                                                               +-------------------+-------------------+
+                                          |                                                                                                       |
+                                          +----------------------------------------------+---------+----------------------------------------------+
+                                                                                         |
+                                                                                         v
+                                                                             +-----------+-----------+
+                                                                             |  LLM-as-Judge Scorer  |
+                                                                             |  - Correctness Judge  |
+                                                                             |  - Hallucination Judge|
+                                                                             +-----------+-----------+
+                                                                                         |
+                                                                                         v
+                                                                             +-----------+-----------+
+                                                                             |  PostgreSQL Database  |
+                                                                             |  (Tasks, Evals, Spans)|
+                                                                             +-----------------------+
 ```
 
 ---
 
-## Quickstart: Using the Live Platform
+## 🚀 Interactive API Quickstart
 
-No local installation is required to test the platform. Access the live Swagger documentation to interact with the API endpoints:
-
-**[https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)**
+> [!TIP]
+> You can immediately test the live platform without setting up a local environment by visiting the interactive Swagger UI:  
+> 🔗 **[https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)**
 
 ---
 
-### Step-by-Step Integration Guide
+### Step-by-Step Integration Workflow
 
-#### Step 1 — Check Platform Health
+#### 1️⃣ Check System Status
 
 ```http
 GET /health
 ```
+
 **Response:**
 ```json
 {
@@ -127,13 +130,14 @@ GET /health
 
 ---
 
-#### Step 2 — Prepare Your External Agent Endpoint
+#### 2️⃣ Prepare Your External Agent Endpoint
 
-Your agent must accept an HTTP `POST` request with a JSON body containing a `question` key and respond with JSON containing an `answer` (or `output`) key.
+Your agent HTTP service must accept a standard JSON payload with a `question` key and return a JSON response containing an `answer` (or `output`) key.
 
-**Sample Request sent by Platform:**
-```json
-POST https://your-agent-service.com/api/chat
+**Incoming HTTP Request from Platform:**
+```http
+POST /api/chat HTTP/1.1
+Host: your-agent-service.com
 Content-Type: application/json
 
 {
@@ -141,14 +145,16 @@ Content-Type: application/json
 }
 ```
 
-**Expected Response from Your Agent:**
+**Expected JSON Response:**
 ```json
 {
   "answer": "The capital of France is Paris, and its population is approximately 67 million."
 }
 ```
 
-*Example minimal Python/FastAPI agent:*
+<details>
+<summary>💡 Click to view minimal Python/FastAPI External Agent example</summary>
+
 ```python
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -160,13 +166,14 @@ class Query(BaseModel):
 
 @app.post("/ask")
 async def ask(query: Query):
-    # Your custom LLM / Agent logic here
+    # Place your LLM chain or agent execution here
     return {"answer": "Paris is the capital of France."}
 ```
+</details>
 
 ---
 
-#### Step 3 — Register Your Agent
+#### 3️⃣ Register Your Agent Endpoint
 
 ```http
 POST /agents
@@ -174,24 +181,24 @@ Content-Type: application/json
 
 {
   "name": "Production Customer Support Agent",
-  "description": "GPT-4o powered support bot",
+  "description": "GPT-4o powered support agent endpoint",
   "endpoint_url": "https://your-agent-service.com/ask"
 }
 ```
 
-**Response:**
+**Response (`200 OK`):**
 ```json
 {
   "id": 1,
   "name": "Production Customer Support Agent",
-  "description": "GPT-4o powered support bot",
+  "description": "GPT-4o powered support agent endpoint",
   "endpoint_url": "https://your-agent-service.com/ask"
 }
 ```
 
 ---
 
-#### Step 4 — Create Evaluation Benchmark Tasks
+#### 4️⃣ Create Evaluation Tasks (Ground-Truth Dataset)
 
 ```http
 POST /tasks
@@ -206,7 +213,7 @@ Content-Type: application/json
 
 ---
 
-#### Step 5 — Trigger Automated Evaluation
+#### 5️⃣ Trigger Evaluation Pipeline
 
 ```http
 POST /evaluations/run
@@ -216,11 +223,13 @@ Content-Type: application/json
   "agent_id": 1
 }
 ```
-> *Note: If `agent_id` is omitted or `null`, the platform automatically evaluates against its built-in internal agent.*
+
+> [!NOTE]
+> If `agent_id` is omitted or set to `null`, the platform will automatically run the evaluation suite against its internal built-in **LangGraph + Groq** agent.
 
 ---
 
-#### Step 6 — Review Comprehensive Evaluation Results
+#### 6️⃣ Inspect Evaluation Metrics & Judgments
 
 ```json
 {
@@ -248,37 +257,37 @@ Content-Type: application/json
 
 ---
 
-## Evaluation Metrics Explained
+## 📈 Evaluation Metrics Breakdown
 
-| Metric | Range / Type | Explanation |
+| Metric Key | Type / Range | Explanation & Description |
 |---|---|---|
-| **`correctness`** | `0.0` – `1.0` | Evaluated by Llama 3.1 8B judge. Measures how accurately the agent output matches the expected ground-truth statement. |
-| **`correctness_rationale`** | `string` | Human-readable explanation provided by the judge justifying the score. |
-| **`hallucination_rate`** | `0.0` – `1.0` | Proportion of factual claims in the agent output not backed by tool execution context or verified sources (`0.0` = zero hallucination). |
-| **`unsupported_claims`** | `list[str]` | List of specific statements or numbers flagged as ungrounded by the hallucination detector. |
-| **`tool_use_success`** | `boolean` | `true` if the agent called all specified `required_tools`, otherwise `false`. |
-| **`missing_tools`** | `list[str]` | Identifies which required tools were omitted during the execution. |
-| **`latency_ms`** | `integer` | Total round-trip execution latency in milliseconds. |
-| **`cost_usd`** | `float` | Estimated token cost calculation based on prompt and completion token counts. |
+| **`correctness`** | `float` ($0.0 - 1.0$) | Evaluated by secondary LLM judge (`Llama-3.1-8b`). Measures factual semantic alignment against expected ground truth. |
+| **`correctness_rationale`** | `string` | Human-readable explanation and evidence breakdown generated by the evaluation judge. |
+| **`hallucination_rate`** | `float` ($0.0 - 1.0$) | Ratio of ungrounded or unsupported claims found in the agent's output relative to tool execution data ($0.0$ = fully grounded). |
+| **`unsupported_claims`** | `list[str]` | Detailed list of specific sentences or assertions flagged as ungrounded by the hallucination judge. |
+| **`tool_use_success`** | `boolean` | Returns `true` if the agent successfully invoked all specified `required_tools`, otherwise `false`. |
+| **`missing_tools`** | `list[str]` | Identifies any mandatory tool dependencies that were omitted during agent execution. |
+| **`latency_ms`** | `integer` | Total execution round-trip duration measured in milliseconds. |
+| **`cost_usd`** | `float` | Estimated token financial cost in USD calculated from prompt and completion token counts. |
 
 ---
 
-## Local Development Setup
+## 💻 Local Development Setup
 
 ### Prerequisites
 
 - **Python 3.11+**
-- **Docker & Docker Compose**
-- **Groq API Key** (Get a free key at [console.groq.com](https://console.groq.com))
+- **Docker & Docker Compose** (for PostgreSQL)
+- **Groq API Key** (Free registration at [console.groq.com](https://console.groq.com))
 
-### Quick Setup
+### Quick Start Guide
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/Abhinand-PV/Agent-eval-platform.git
 cd Agent-eval-platform
 
-# 2. Create and activate virtual environment
+# 2. Create & activate a virtual environment
 python -m venv venv
 venv\Scripts\activate          # On Windows (PowerShell/CMD)
 # source venv/bin/activate     # On macOS/Linux
@@ -286,35 +295,35 @@ venv\Scripts\activate          # On Windows (PowerShell/CMD)
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Create environment file (.env)
+# 4. Configure environment variables
 cat <<EOT > .env
 DATABASE_URL=postgresql+asyncpg://postgres:Admin@localhost:5432/agent_eval
 GROQ_API_KEY=your_groq_api_key_here
 EOT
 
-# 5. Spin up PostgreSQL database container
+# 5. Start local PostgreSQL database container
 docker-compose up -d
 
-# 6. Seed sample benchmark tasks
+# 6. Seed initial benchmark tasks
 python seed_tasks.py
 
-# 7. Run development server
+# 7. Start FastAPI development server
 uvicorn app.main:app --reload
 ```
 
-Access local API documentation at: `http://localhost:8000/docs`
+Local Swagger Documentation will be available at: `http://localhost:8000/docs`
 
 ---
 
-## Terminal Demo & Test Scripts
+## 🧪 Testing & Terminal Demonstrations
 
-Run the included automated test suite locally:
-
+### Run Integration Test Suite
 ```bash
 python test_eval.py
 ```
 
-Run an end-to-end evaluation terminal demonstration against the live production server:
+### Run Live Interactive Terminal Demo
+To run the automated terminal demo against the live production server (with formatted table outputs):
 
 ```bash
 pip install requests rich
@@ -323,48 +332,48 @@ python demo_platform.py https://agent-eval-platform.vercel.app
 
 ---
 
-## Repository Structure
+## 📂 Repository Structure
 
 ```
 agent-eval-platform/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py             # FastAPI routes, schemas, and app initialization
-│   ├── models.py           # SQLAlchemy async database models (EvalTask, EvalResult, AgentEndpoint)
-│   ├── database.py         # Async engine setup, session maker, and DB init
-│   ├── agent.py            # LangGraph internal agent flow with tool binding
-│   ├── evaluator.py        # Evaluation workflow manager & HTTP agent caller
-│   ├── scoring.py          # LLM-as-judge scoring logic (correctness & hallucination)
-│   ├── tools.py            # Agent tools (lookup_data, calculate)
-│   └── instrumentation.py  # OpenTelemetry tracing setup & span metrics exporter
-├── demo_platform.py        # Terminal demo script with rich table output
-├── seed_tasks.py           # Seeding script for sample benchmark tasks
-├── test_eval.py            # Integration test runner using FastAPI TestClient
-├── docker-compose.yml      # Local PostgreSQL service definition
-├── Dockerfile              # Container definition for containerized deployment
+│   ├── main.py             # FastAPI entry point, schemas, and endpoint definitions
+│   ├── models.py           # SQLAlchemy async ORM models (EvalTask, EvalResult, AgentEndpoint)
+│   ├── database.py         # Async database engine, session factory, and migration init
+│   ├── agent.py            # LangGraph internal reference agent with tool bindings
+│   ├── evaluator.py        # Core evaluation coordinator & HTTP agent integration worker
+│   ├── scoring.py          # LLM-as-a-Judge scoring engine (correctness & hallucination)
+│   ├── tools.py            # Built-in reference agent tools (lookup_data, calculate)
+│   └── instrumentation.py  # OpenTelemetry tracer provider & custom span exporter
+├── demo_platform.py        # Terminal demo runner with Rich table output
+├── seed_tasks.py           # Benchmark database seeding script
+├── test_eval.py            # Async API integration test suite
+├── docker-compose.yml      # Local PostgreSQL container service configuration
+├── Dockerfile              # Container image build configuration
 ├── requirements.txt        # Python package dependencies
-├── vercel.json             # Vercel Serverless deployment config
-└── README.md
+├── vercel.json             # Vercel serverless deployment manifest
+└── README.md               # Project documentation
 ```
 
 ---
 
-## Deployment
+## 🌐 Deployment Configuration
 
-The live production instance is deployed on **Vercel** with a serverless PostgreSQL database hosted on **Render**.
+The platform is designed for seamless deployment on serverless infrastructure.
 
-### Deploying Your Own Instance:
+### Deploying to Vercel
 
-1. **Fork** this repository.
-2. Connect your fork to [Vercel](https://vercel.com).
-3. Set the following **Environment Variables** in Vercel settings:
-   - `DATABASE_URL`: Your PostgreSQL connection string (PostgreSQL serverless URL using `postgresql+asyncpg://` or `postgresql://`).
-   - `GROQ_API_KEY`: Your Groq API key.
-4. Deploy! Vercel automatically deploys commits to `main`.
+1. **Fork** this repository to your GitHub account.
+2. Connect the repository to your [Vercel Workspace](https://vercel.com).
+3. Configure the following **Environment Variables** in Vercel Project Settings:
+   - `DATABASE_URL`: Your cloud PostgreSQL connection URI (e.g., Supabase, Render, ElephantSQL using `postgresql+asyncpg://` or `postgresql://`).
+   - `GROQ_API_KEY`: Your Groq API authentication key.
+4. Trigger Deployment! Vercel handles serverless routing via `vercel.json`.
 
 ---
 
-## License
+## 📄 License
 
-This project is open-source under the [MIT License](LICENSE).
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
