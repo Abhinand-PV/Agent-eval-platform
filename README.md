@@ -15,12 +15,12 @@
 </p>
 
 <p align="center">
-  <a href="https://agent-eval-platform.vercel.app/docs"><strong>🚀 View Interactive API Documentation (Swagger) »</strong></a>
+  <a href="https://agent-eval-platform.vercel.app/docs"><strong>View Interactive API Documentation (Swagger) »</strong></a>
 </p>
 
 ---
 
-## 📌 Executive Summary
+## Executive Summary
 
 Evaluating autonomous LLM agents with traditional exact-string matching or naive assertions is insufficient due to non-deterministic, open-ended outputs. 
 
@@ -28,19 +28,19 @@ Evaluating autonomous LLM agents with traditional exact-string matching or naive
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-- **🔌 Plug-and-Play Agent Integration:** Register external HTTP agent endpoints standardizing on simple JSON payloads. Zero SDK lock-in.
-- **⚖️ LLM-as-a-Judge Scoring Engine:** Automated factual correctness scoring ($0.0$ to $1.0$) paired with secondary judge reasoning rationales.
-- **🛡️ Hallucination & Fact-Checking Audit:** Detects unsupported or ungrounded assertions made by agents against reference context and execution state.
-- **🛠️ Tool Usage Verification:** Audits whether mandatory tools (e.g., `lookup_data`, `calculate`) were correctly invoked or omitted during workflow execution.
-- **📊 Real-time Metric Aggregation:** Tracks execution latency (ms), token volume, and estimated execution costs (USD) alongside qualitative scores.
-- **📡 OpenTelemetry Observability:** Built-in trace generation and custom span processor collection for end-to-end multi-step agent observability.
-- **⚡ High-Performance Async Architecture:** Built with Python 3.11+, **FastAPI**, **SQLAlchemy 2.0 (asyncio)**, and **asyncpg**.
+- **Plug-and-Play Agent Integration:** Register external HTTP agent endpoints standardizing on simple JSON payloads with zero SDK lock-in.
+- **LLM-as-a-Judge Scoring Engine:** Automated factual correctness scoring ($0.0$ to $1.0$) paired with secondary judge reasoning rationales.
+- **Hallucination & Fact-Checking Audit:** Detects unsupported or ungrounded assertions made by agents against reference context and execution state.
+- **Tool Usage Verification:** Audits whether mandatory tools (e.g., `lookup_data`, `calculate`) were correctly invoked or omitted during workflow execution.
+- **Real-Time Metric Aggregation:** Tracks execution latency (ms), token volume, and estimated execution costs (USD) alongside qualitative scores.
+- **OpenTelemetry Observability:** Built-in trace generation and custom span processor collection for end-to-end multi-step agent observability.
+- **High-Performance Async Architecture:** Built with Python 3.11+, **FastAPI**, **SQLAlchemy 2.0 (asyncio)**, and **asyncpg**.
 
 ---
 
-## 🛠️ Tech Stack & Ecosystem
+## Tech Stack & Ecosystem
 
 | Component Layer | Technology | Purpose / Role |
 |---|---|---|
@@ -53,7 +53,7 @@ Evaluating autonomous LLM agents with traditional exact-string matching or naive
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```
                                   +-----------------------------------+
@@ -61,9 +61,9 @@ Evaluating autonomous LLM agents with traditional exact-string matching or naive
                                   +-----------------+-----------------+
                                                     |
                                                     v
-                                      +-------------+-------------+
-                                      |  FastAPI App (Vercel)     |
-                                      +-------------+-------------+
+                                       +-------------+-------------+
+                                       |  FastAPI App (Vercel)     |
+                                       +-------------+-------------+
                                                     |
           +-----------------------------------------+-----------------------------------------+
           |                                         |                                         |
@@ -105,17 +105,17 @@ Evaluating autonomous LLM agents with traditional exact-string matching or naive
 
 ---
 
-## 🚀 Interactive API Quickstart
+## Interactive API Quickstart
 
 > [!TIP]
-> You can immediately test the live platform without setting up a local environment by visiting the interactive Swagger UI:  
-> 🔗 **[https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)**
+> You can test the live platform without setting up a local environment by visiting the interactive Swagger UI:  
+> **[https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)**
 
 ---
 
 ### Step-by-Step Integration Workflow
 
-#### 1️⃣ Check System Status
+#### 1. Check System Status
 
 ```http
 GET /health
@@ -130,7 +130,7 @@ GET /health
 
 ---
 
-#### 2️⃣ Prepare Your External Agent Endpoint
+#### 2. Prepare Your External Agent Endpoint
 
 Your agent HTTP service must accept a standard JSON payload with a `question` key and return a JSON response containing an `answer` (or `output`) key.
 
@@ -153,7 +153,7 @@ Content-Type: application/json
 ```
 
 <details>
-<summary>💡 Click to view minimal Python/FastAPI External Agent example</summary>
+<summary>Click to view minimal Python/FastAPI External Agent example</summary>
 
 ```python
 from fastapi import FastAPI
@@ -173,7 +173,7 @@ async def ask(query: Query):
 
 ---
 
-#### 3️⃣ Register Your Agent Endpoint
+#### 3. Register Your Agent Endpoint
 
 ```http
 POST /agents
@@ -198,7 +198,7 @@ Content-Type: application/json
 
 ---
 
-#### 4️⃣ Create Evaluation Tasks (Ground-Truth Dataset)
+#### 4. Create Evaluation Tasks (Ground-Truth Dataset)
 
 ```http
 POST /tasks
@@ -213,7 +213,7 @@ Content-Type: application/json
 
 ---
 
-#### 5️⃣ Trigger Evaluation Pipeline
+#### 5. Trigger Evaluation Pipeline
 
 ```http
 POST /evaluations/run
@@ -229,7 +229,7 @@ Content-Type: application/json
 
 ---
 
-#### 6️⃣ Inspect Evaluation Metrics & Judgments
+#### 6. Inspect Evaluation Metrics & Judgments
 
 ```json
 {
@@ -257,7 +257,7 @@ Content-Type: application/json
 
 ---
 
-## 📈 Evaluation Metrics Breakdown
+## Evaluation Metrics Breakdown
 
 | Metric Key | Type / Range | Explanation & Description |
 |---|---|---|
@@ -272,13 +272,13 @@ Content-Type: application/json
 
 ---
 
-## 💻 Local Development Setup
+## Local Development Setup
 
 ### Prerequisites
 
 - **Python 3.11+**
 - **Docker & Docker Compose** (for PostgreSQL)
-- **Groq API Key** (Free registration at [console.groq.com](https://console.groq.com))
+- **Groq API Key** (Free registration at [consolegroq.com](https://console.groq.com))
 
 ### Quick Start Guide
 
@@ -315,7 +315,7 @@ Local Swagger Documentation will be available at: `http://localhost:8000/docs`
 
 ---
 
-## 🧪 Testing & Terminal Demonstrations
+## Testing & Terminal Demonstrations
 
 ### Run Integration Test Suite
 ```bash
@@ -332,7 +332,7 @@ python demo_platform.py https://agent-eval-platform.vercel.app
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```
 agent-eval-platform/
@@ -358,7 +358,7 @@ agent-eval-platform/
 
 ---
 
-## 🌐 Deployment Configuration
+## Deployment Configuration
 
 The platform is designed for seamless deployment on serverless infrastructure.
 
@@ -373,7 +373,6 @@ The platform is designed for seamless deployment on serverless infrastructure.
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
-
