@@ -3,7 +3,7 @@ import time
 from typing import Annotated, TypedDict
 
 from dotenv import load_dotenv
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
@@ -13,13 +13,24 @@ from app.tools import lookup_data, calculate
 
 load_dotenv()
 
-# Register both tools so the agent can discover them
+# Register tools so the agent can discover them
 TOOLS = [lookup_data, calculate]
+
+SYSTEM_PROMPT = SystemMessage(
+    content=(
+        "You are a helpful and precise AI agent equipped with tools.\n"
+        "Use 'lookup_data' to retrieve stored facts or knowledge.\n"
+        "Use 'calculate' for mathematical computations.\n"
+        "Always use available tools when needed, and provide clear, accurate responses."
+    )
+)
 
 
 # Typed state that flows through the graph
 class AgentState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
+
+
 def create_agent():
     # Initialize Groq LLM with tool bindings
     llm = ChatGroq(
@@ -51,11 +62,14 @@ def create_agent():
     graph.add_edge("tools", "agent")
 
     return graph.compile()
+
+
 def run_agent(question: str) -> dict:
     agent = create_agent()
     start_time = time.time()
-    # Invoke the graph with the user's question
-    result = agent.invoke({"messages": [HumanMessage(content=question)]})
+    # Invoke the graph with system prompt and user question
+    initial_messages = [SYSTEM_PROMPT, HumanMessage(content=question)]
+    result = agent.invoke({"messages": initial_messages})
     elapsed_ms = int((time.time() - start_time) * 1000)
 
     final_message = result["messages"][-1]
@@ -63,4 +77,4 @@ def run_agent(question: str) -> dict:
         "output": final_message.content,
         "messages": result["messages"],
         "latency_ms": elapsed_ms,
-    }
+    }
