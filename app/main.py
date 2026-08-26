@@ -1,7 +1,10 @@
+import pathlib
 from contextlib import asynccontextmanager
 
+import httpx
 from fastapi import FastAPI, Depends, HTTPException, Query
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,6 +13,8 @@ import app.instrumentation  # noqa: F401 - triggers OTel setup on import
 from app.database import get_session, init_db
 from app.models import EvalTask, EvalResult, AgentEndpoint
 from app.evaluator import run_evaluation
+
+STATIC_DIR = pathlib.Path(__file__).parent / "static"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,13 +27,37 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Agent Eval Platform", lifespan=lifespan)
 
+# Serve static assets (CSS / JS)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
 @app.get("/", include_in_schema=False)
 async def root():
-    return RedirectResponse(url="/docs")
+    return FileResponse(STATIC_DIR / "index.html")
 
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+class AgentHealthCheck(BaseModel):
+    agent_id: int
+
+
+@app.post("/agents/check-health", summary="Test if an external agent endpoint is reachable")
+async def check_agent_health(body: AgentHealthCheck, session: AsyncSession = Depends(get_session)):
+    """Ping a registered agent's endpoint to verify it's online."""
+    result = await session.execute(
+        select(AgentEndpoint).where(AgentEndpoint.id == body.agent_id)
+    )
+    agent = result.scalar_one_or_none()
+    if agent is None:
+        raise HTTPException(status_code=404, detail=f"Agent with id {body.agent_id} not found.")
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(agent.endpoint_url)
+            return {"status": "live", "http_status": resp.status_code}
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Agent unreachable: {str(e)}")
 class TaskCreate(BaseModel):
     question: str
     expected_answer: str
