@@ -7,6 +7,14 @@
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/app/static/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/app/static/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "app/main.py"
     }
