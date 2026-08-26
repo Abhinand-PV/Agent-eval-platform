@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Eval Platform — Test Your AI Agent</title>
+  <meta name="description" content="A professional platform to test, evaluate, and benchmark your AI agents with clear scores, plain-language insights, and zero coding required." />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+
+<!-- Toast Container -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- App Layout -->
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h1>
+        <span class="brand-icon">AE</span>
+        Agent Eval
+      </h1>
+      <p>Testing Platform</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Main</span>
+
+      <div class="nav-item active" data-view="dashboard" id="nav-dashboard">
+        <span class="nav-icon">—</span>
+        Dashboard
+      </div>
+
+      <div class="nav-item" data-view="test-runner" id="nav-test-runner">
+        <span class="nav-icon">→</span>
+        Test Runner
+      </div>
+
+      <span class="nav-section-label">Manage</span>
+
+      <div class="nav-item" data-view="agents" id="nav-agents">
+        <span class="nav-icon">◦</span>
+        Agents
+      </div>
+
+      <div class="nav-item" data-view="tasks" id="nav-tasks">
+        <span class="nav-icon">◦</span>
+        Test Cases
+      </div>
+
+      <div class="nav-item" data-view="history" id="nav-history">
+        <span class="nav-icon">◦</span>
+        History
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      Agent Eval Platform v1.0
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <div class="content-header">
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">☰</button>
+      <h2 id="page-title">Dashboard</h2>
+      <p id="page-subtitle">Overview of your agent's performance</p>
+    </div>
+
+    <div class="content-body">
+
+      <!-- ═══ Dashboard ═══ -->
+      <section class="view-panel active" id="view-dashboard">
+
+        <div class="quick-launch">
+          <div class="ql-text">
+            <h3>Ready to test your agent?</h3>
+            <p>Use the guided Test Runner to evaluate your AI agent in a few clicks — no code needed.</p>
+          </div>
+          <button class="btn btn-primary btn-lg" id="dash-launch-btn">Start Testing →</button>
+        </div>
+
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Evaluations</div>
+            <div class="stat-value" id="stat-total-evals">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg. Accuracy</div>
+            <div class="stat-value" id="stat-accuracy">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Hallucination Risk</div>
+            <div class="stat-value" id="stat-hallucination">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg. Speed</div>
+            <div class="stat-value" id="stat-latency">—</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Recent Activity</div>
+              <div class="card-subtitle">Latest evaluation results</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="dash-view-all">View All →</button>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Question</th>
+                  <th>Accuracy</th>
+                  <th>Hallucination</th>
+                  <th>Speed</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dash-recent-tbody">
+                <tr>
+                  <td colspan="6">
+                    <div class="table-empty">
+                      <div class="empty-icon">—</div>
+                      No evaluations yet. Launch the Test Runner to get started.
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Test Runner ═══ -->
+      <section class="view-panel" id="view-test-runner">
+
+        <div class="wizard-stepper">
+          <div class="wizard-step active" data-step="1">
+            <div class="step-circle">1</div>
+            <div class="step-info">
+              <span class="step-title">Select Agent</span>
+              <span class="step-desc">Choose who to test</span>
+            </div>
+          </div>
+          <div class="wizard-step" data-step="2">
+            <div class="step-circle">2</div>
+            <div class="step-info">
+              <span class="step-title">Choose Tests</span>
+              <span class="step-desc">Pick benchmark questions</span>
+            </div>
+          </div>
+          <div class="wizard-step" data-step="3">
+            <div class="step-circle">3</div>
+            <div class="step-info">
+              <span class="step-title">Run & Review</span>
+              <span class="step-desc">See the results</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="wizard-panel active" id="wiz-step-1">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Who do you want to test?</div>
+                <div class="card-subtitle">Select the built-in AI agent or connect your own external agent.</div>
+              </div>
+            </div>
+            <div class="agent-option-grid" id="agent-options">
+              <div class="agent-option selected" data-agent="builtin" id="opt-builtin">
+                <div class="selected-check">✓</div>
+                <div class="option-icon">B</div>
+                <div class="option-title">Built-in Agent</div>
+                <div class="option-desc">Use the default AI agent — great for getting started and exploring the platform.</div>
+              </div>
+              <div class="agent-option" data-agent="external" id="opt-external">
+                <div class="selected-check">✓</div>
+                <div class="option-icon">E</div>
+                <div class="option-title">Your Own Agent</div>
+                <div class="option-desc">Connect an external agent via URL. We'll send it questions and measure its responses.</div>
+              </div>
+            </div>
+
+            <div id="external-agent-form" class="mt-24 hidden">
+              <div class="form-group">
+                <label class="form-label" for="ext-agent-select">Select a registered agent</label>
+                <select class="form-select" id="ext-agent-select">
+                  <option value="">— Choose an agent —</option>
+                </select>
+                <div class="form-hint">Or register a new one from the Agents page.</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="test-conn-btn" disabled>Test Connection</button>
+              <span class="conn-status hidden" id="conn-status"></span>
+            </div>
+          </div>
+          <div class="wizard-actions">
+            <div></div>
+            <button class="btn btn-primary" id="wiz-next-1">Next: Choose Tests →</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="wizard-panel" id="wiz-step-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Which questions should we test?</div>
+                <div class="card-subtitle">Select the benchmark questions your agent will answer. Responses are scored automatically.</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="select-all-tasks">Select All</button>
+            </div>
+            <div class="task-check-list" id="task-check-list">
+              <div class="table-empty">
+                <div class="empty-icon">—</div>
+                No test cases found. Add some from the Test Cases page first.
+              </div>
+            </div>
+          </div>
+          <div class="wizard-actions">
+            <button class="btn btn-secondary" id="wiz-prev-2">← Back</button>
+            <button class="btn btn-primary" id="wiz-next-2">Run Evaluation →</button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="wizard-panel" id="wiz-step-3">
+          <div id="wiz-running">
+            <div class="run-progress-wrap">
+              <div class="spinner-ring"></div>
+              <div class="run-text">Evaluating</div>
+              <div class="run-sub">Your agent is answering questions. Each response is being scored automatically.</div>
+            </div>
+          </div>
+          <div id="wiz-results" class="hidden">
+            <div class="result-summary-grid" id="result-summary-grid"></div>
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Detailed Results</div>
+                  <div class="card-subtitle">Click any row for a full breakdown.</div>
+                </div>
+              </div>
+              <div class="data-table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Question</th>
+                      <th>Agent's Answer</th>
+                      <th>Accuracy</th>
+                      <th>Hallucination</th>
+                      <th>Speed</th>
+                      <th>Result</th>
+                    </tr>
+                  </thead>
+                  <tbody id="results-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="wizard-actions">
+              <button class="btn btn-secondary" id="wiz-restart">← Run Another Test</button>
+              <button class="btn btn-primary" id="wiz-go-dash">View Dashboard →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Agents ═══ -->
+      <section class="view-panel" id="view-agents">
+        <div class="card mb-24">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Register a New Agent</div>
+              <div class="card-subtitle">Provide a name, description, and the URL where your agent is hosted.</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label class="form-label" for="agent-name">Agent Name</label>
+              <input class="form-input" id="agent-name" placeholder="e.g. My GPT Agent" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="agent-url">Endpoint URL</label>
+              <input class="form-input" id="agent-url" placeholder="https://my-agent.example.com/chat" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="agent-desc">Description (optional)</label>
+            <input class="form-input" id="agent-desc" placeholder="Brief description of what this agent does" />
+          </div>
+          <button class="btn btn-primary" id="register-agent-btn">Register Agent</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Registered Agents</div>
+              <div class="card-subtitle">All agents registered on this platform</div>
+            </div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Endpoint</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="agents-tbody">
+                <tr><td colspan="5"><div class="table-empty"><div class="empty-icon">—</div>No agents registered yet.</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ Test Cases ═══ -->
+      <section class="view-panel" id="view-tasks">
+        <div class="card mb-24">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Add a Test Case</div>
+              <div class="card-subtitle">Create a question your agent should answer, along with the expected correct answer.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-question">Question</label>
+            <input class="form-input" id="task-question" placeholder="e.g. What is the capital of France?" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-answer">Expected Answer</label>
+            <textarea class="form-textarea" id="task-answer" placeholder="e.g. The capital of France is Paris." rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-tools">Required Tools (optional, comma-separated)</label>
+            <input class="form-input" id="task-tools" placeholder="e.g. lookup_data, search" />
+            <div class="form-hint">If your agent needs certain tools to answer this question, list them here.</div>
+          </div>
+          <button class="btn btn-primary" id="create-task-btn">Add Test Case</button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">All Test Cases</div>
+              <div class="card-subtitle">Your benchmark question bank</div>
+            </div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Question</th>
+                  <th>Expected Answer</th>
+                  <th>Tools</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tasks-tbody">
+                <tr><td colspan="5"><div class="table-empty"><div class="empty-icon">—</div>No test cases yet. Add your first one above.</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ History ═══ -->
+      <section class="view-panel" id="view-history">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Evaluation History</div>
+              <div class="card-subtitle">All past benchmark runs — click a row for details</div>
+            </div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Task</th>
+                  <th>Agent Answer</th>
+                  <th>Accuracy</th>
+                  <th>Hallucination</th>
+                  <th>Speed</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody">
+                <tr><td colspan="7"><div class="table-empty"><div class="empty-icon">—</div>No evaluation history yet.</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 id="modal-title">Evaluation Detail</h3>
+      <button class="modal-close" id="modal-close-btn">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="modal-close-footer">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
