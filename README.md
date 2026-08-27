@@ -15,7 +15,9 @@
 </p>
 
 <p align="center">
-  <a href="https://agent-eval-platform.vercel.app/docs"><strong>View Interactive API Documentation (Swagger) »</strong></a>
+  <a href="https://agent-eval-platform.vercel.app"><strong>🚀 View Live Dashboard »</strong></a>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="https://agent-eval-platform.vercel.app/docs"><strong>📖 Interactive API Docs (Swagger) »</strong></a>
 </p>
 
 ---
@@ -108,8 +110,9 @@ Evaluating autonomous LLM agents with traditional exact-string matching or naive
 ## Interactive API Quickstart
 
 > [!TIP]
-> You can test the live platform without setting up a local environment by visiting the interactive Swagger UI:  
-> **[https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs)**
+> You can test the live platform without setting up a local environment:
+> - **Dashboard UI:** [https://agent-eval-platform.vercel.app](https://agent-eval-platform.vercel.app) — full visual interface for managing agents, test cases, and running evaluations.
+> - **Swagger API Docs:** [https://agent-eval-platform.vercel.app/docs](https://agent-eval-platform.vercel.app/docs) — interactive REST API explorer.
 
 ---
 
